@@ -1,133 +1,170 @@
 # coding: utf-8
+"""Run WaterCooledChillerExample7 with OpenModelica.
+
+This script uses the OpenModelica installation that Modex is using.  It does
+not require JModelica, pymodelica, FMPy, or a pre-built FMU.
+"""
+
+import argparse
 import os
-import subprocess
-
-# -------------------------------------------
-# モデル名を指定してfmuコンパイルを実行
-# -------------------------------------------
-
-# ディレクトリとコンパイル対象の定義
-jmodelica_dir = 'C:\JModelica.org-2.14' # JModelicaのインストールディレクトリ
-pkg_dir = 'C:\JModelica.org-2.14\workspace' # パッケージのあるディレクトリ 
-# FMU化対象のモデル名称
-#model = 'Buildings.Examples.ChillerPlant.DataCenterContinuousTimeControl' # サンプルとして用いたデータセンター冷房のモデル
-#model = 'ZEBGuidelineMid.WaterCooledChillerExample' # データセンター冷房モデルをたんにコピーしたもの
-#model = 'ZEBGuidelineMid.WaterCooledChillerExample2' # 余計な設備と制御を除いたシンプルな熱源系のモデル
-#model = 'ZEBGuidelineMid.WaterCooledChillerExample3' # 室モデルをカスタム可能とし，外壁熱負荷を追加
-#model = 'ZEBGuidelineMid.WaterCooledChillerExample4' # AHUの給気温度制御を追加
-#model = 'ZEBGuidelineMid.WaterCooledChillerExample5' # AHUに外気取り込みダクト・ダンパ・還気ファンを追加
-#model = 'ZEBGuidelineMid.WaterCooledChillerExample6' # チラーをもう1つの系統分追加
-model = 'ZEBGuidelineMid.WaterCooledChillerExample7' # 蓄熱槽とバルブを追加
-fmu_filename = os.getcwd() + '\\' + model.replace('.', '_') + '.fmu' # fmuファイル名
-compile_script = os.getcwd() + '\\' + 'compile_fmu.py' # コンパイルスクリプトの出力先
-
-# fmuコンパイルスクリプトの作成
-script_string=('# coding: utf-8\n'
-        'import os\n'
-        'os.environ[\'MODELICAPATH\'] = '
-        'r\''
-        'C:\JModelica.org-2.14\install\ThirdParty\MSL;'
-        'C:\JModelica.org-2.14\install\ThirdParty;'
-        + pkg_dir +'\'\n\n'
-        'from pymodelica import compile_fmu\n'
-        'fmu = compile_fmu(\''
-        + model
-        + '\', version=\'2.0\', target=\'cs\', compile_to=\''
-        + fmu_filename
-        + '\', compiler_log_level=\'w,i:compile_fmu.log\')\n'
-        )
-
-# スクリプトの書き出し
-if os.path.isfile(compile_script):
-    os.remove(compile_script)
-with open(compile_script, mode='w') as f:
-    f.write(script_string)
-
-# fmuコンパイル実行
-bat = jmodelica_dir + '\\IPython64.bat' # JModelicaのIPython64実行batファイルのパス
-command = bat + ' ' + compile_script
-result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
-print(result.stdout)
-
-# -------------------------------------------
-# コンパイルしたfmuを実行して結果をグラフ表示
-# 以下を参照
-# https://github.com/CATIA-Systems/FMPy/blob/master/fmpy/examples/custom_input.py
-# -------------------------------------------
-# import
-from fmpy import read_model_description, extract
-from fmpy.fmi2 import FMU2Slave
-from fmpy.util import plot_result, download_test_file
-import numpy as np
 import shutil
-import matplotlib.pyplot as plt
-
-# simulation setting
-start_time = 1.30464e+07 # 151日後=6/1 00:00
-stop_time = 1.36512e+07 # 158日後=6/8 00:00
-step_num = 5000
-step_size = (stop_time - start_time) / step_num
-
-# read the description
-model_description = read_model_description(fmu_filename)
-
-# collect the value references
-vrs = {}
-for variable in model_description.modelVariables:
-    vrs[variable.name] = variable.valueReference
-tempDryBulb = vrs['weaBus.TDryBul']      # 外気温度
-tempAirSupply = vrs['TAirSup.T'] # 給気温度
-tempRoomAir = vrs['roo.TRooAir'] # 室温 Example 1, 2
-#tempRoomAir = vrs['TRooAir.T'] # 室温 Example 3
-tempVolume2Chiller = vrs['chi.vol2.T'] # チラー冷水出口温度
-tempVolume1Chiller = vrs['chi.vol1.T'] # チラー冷却水出口温度
-tempWaterReturn = vrs['TCHWEntChi.T'] # チラー冷水入り口温度
-tempWaterCT = vrs['TCWLeaTow.T'] # 冷却塔出口温度
-powerCompressor = vrs['chi.P'] # コンプレッサ消費電力[W]
-openingDegreeVal1 = vrs['val1.y'] # バルブ1開度
-
-# extract the FMU
-unzipdir = extract(fmu_filename)
-fmu = FMU2Slave(guid=model_description.guid,
-                unzipDirectory=unzipdir,
-                modelIdentifier=model_description.coSimulation.modelIdentifier,
-                instanceName='instance1')
-# initialize
-fmu.instantiate()
-fmu.setupExperiment(startTime=start_time)
-fmu.enterInitializationMode()
-fmu.exitInitializationMode()
-time = start_time
-
-rows = []  # list to record the results
-
-# simulation loop
-while time < stop_time:
-
-    # set the input
-    # fmu.setReal([vr_inputs], [0.0 if time < 0.9 else 1.0])
-
-    # perform one step
-    fmu.doStep(currentCommunicationPoint=time, communicationStepSize=step_size)
-
-    # get the values for 'inputs' and 'outputs[4]'
-    input1, input2, input3, output1, output2, output3 = fmu.getReal([tempDryBulb, tempVolume2Chiller, openingDegreeVal1, tempRoomAir, powerCompressor, tempAirSupply])
-
-    # append the results
-    rows.append([time, input1, input2, input3, output1, output2, output3])
-
-    # advance the time
-    time += step_size
-
-# shutdown
-fmu.terminate()
-fmu.freeInstance()
-shutil.rmtree(unzipdir, ignore_errors=True)
-
-result = np.array(rows)
-fig = plt.figure(figsize=(20,40))
-for i in range(len(result[0])):
-    fig.add_subplot(len(result[0]), 1, i+1)
-    plt.plot(result[0:500,0], result[0:500,i])
+import subprocess
+import sys
+from pathlib import Path
 
 
+DEFAULT_MODEL = "WaterCooledChillerExample.WaterCooledChillerExample7"
+DEFAULT_OMC = Path(r"C:\Program Files\OpenModelica1.27.0-64bit\bin\omc.exe")
+DEFAULT_START_TIME = 13046400.0
+DEFAULT_STOP_TIME = 13651200.0
+DEFAULT_INTERVALS = 500
+DEFAULT_TOLERANCE = 1e-6
+
+
+def modelica_path(path):
+    return path.resolve().as_posix()
+
+
+def find_omc(user_value):
+    candidates = []
+
+    if user_value:
+        candidates.append(Path(user_value))
+
+    env_value = os.environ.get("OMC_PATH")
+    if env_value:
+        candidates.append(Path(env_value))
+
+    omc_on_path = shutil.which("omc")
+    if omc_on_path:
+        candidates.append(Path(omc_on_path))
+
+    candidates.append(DEFAULT_OMC)
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+
+    searched = "\n".join("  - " + str(candidate) for candidate in candidates)
+    raise FileNotFoundError(
+        "OpenModelica compiler was not found. Checked:\n"
+        + searched
+        + "\n\nInstall OpenModelica or pass --omc \"C:\\path\\to\\omc.exe\"."
+    )
+
+
+def write_mos(args, repo_dir, run_dir):
+    package_file = repo_dir / "package.mo"
+    if not package_file.is_file():
+        raise FileNotFoundError(f"Could not find package.mo at {package_file}")
+
+    mos_file = run_dir / "run_watercooledchillerexample.mos"
+    mos_file.write_text(
+        "\n".join(
+            [
+                'loadModel(Modelica, {"3.2.2"});',
+                'loadModel(Buildings, {"6.0.0"});',
+                f'loadFile("{modelica_path(package_file)}");',
+                (
+                    f"simulate({args.model}, "
+                    f"startTime={args.start_time}, "
+                    f"stopTime={args.stop_time}, "
+                    f"numberOfIntervals={args.intervals}, "
+                    f"tolerance={args.tolerance});"
+                ),
+                "getErrorString();",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    return mos_file
+
+
+def run_openmodelica(omc, mos_file, run_dir):
+    result = subprocess.run(
+        [str(omc), str(mos_file)],
+        cwd=str(run_dir),
+        text=True,
+        capture_output=True,
+    )
+
+    log_file = run_dir / "openmodelica_run.log"
+    log_file.write_text(
+        "STDOUT\n======\n"
+        + result.stdout
+        + "\nSTDERR\n======\n"
+        + result.stderr,
+        encoding="utf-8",
+    )
+
+    return result, log_file
+
+
+def result_file_from_output(output):
+    for line in output.splitlines():
+        line = line.strip()
+        if line.startswith("resultFile = "):
+            value = line.split("=", 1)[1].strip().strip(",").strip('"')
+            if value:
+                return Path(value)
+    return None
+
+
+def main():
+    repo_dir = Path(__file__).resolve().parent
+
+    parser = argparse.ArgumentParser(
+        description="Run WaterCooledChillerExample7 with OpenModelica."
+    )
+    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--start-time", type=float, default=DEFAULT_START_TIME)
+    parser.add_argument("--stop-time", type=float, default=DEFAULT_STOP_TIME)
+    parser.add_argument("--intervals", type=int, default=DEFAULT_INTERVALS)
+    parser.add_argument("--tolerance", type=float, default=DEFAULT_TOLERANCE)
+    parser.add_argument("--omc", default=None, help="Path to omc.exe")
+    parser.add_argument(
+        "--run-dir",
+        default=str(repo_dir / "runs" / "openmodelica"),
+        help="Directory for generated simulation files",
+    )
+    args = parser.parse_args()
+
+    run_dir = Path(args.run_dir).resolve()
+    run_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        omc = find_omc(args.omc)
+        mos_file = write_mos(args, repo_dir, run_dir)
+        print(f"OpenModelica: {omc}")
+        print(f"Model:         {args.model}")
+        print(f"Run dir:       {run_dir}")
+        print("Starting simulation...")
+
+        result, log_file = run_openmodelica(omc, mos_file, run_dir)
+        output = result.stdout + result.stderr
+        result_file = result_file_from_output(output)
+
+        if (
+            result.returncode != 0
+            or "The simulation finished successfully" not in output
+            or result_file is None
+        ):
+            print("\nSimulation failed.")
+            print(f"Full log: {log_file}")
+            print("\nLast OpenModelica output:")
+            print("\n".join(output.splitlines()[-40:]))
+            return 1
+
+        print("\nSimulation finished successfully.")
+        print(f"Result file: {result_file}")
+        print(f"Full log:    {log_file}")
+        return 0
+
+    except Exception as exc:
+        print(f"\nError: {exc}")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

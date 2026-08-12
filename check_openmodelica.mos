@@ -1,0 +1,6 @@
+loadModel(Modelica, {"3.2.2"}, false, "", true);
+loadModel(Buildings, {"6.0.0"}, false, "", true);
+loadFile("package.mo");
+getClassNames(WaterCooledChillerExample);
+checkModel(WaterCooledChillerExample.WaterCooledChillerExample7);
+getErrorString();

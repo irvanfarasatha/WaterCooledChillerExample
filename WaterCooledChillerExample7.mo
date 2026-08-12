@@ -1,6 +1,6 @@
 within WaterCooledChillerExample;
 
-partial model WaterCooledChillerExample7 "Primary only chiller plant system with water-side economizer"
+model WaterCooledChillerExample7 "Primary only chiller plant system with water-side economizer"
   replaceable package MediumA = Buildings.Media.Air "Medium model";
   replaceable package MediumW = Buildings.Media.Water "Medium model";
   parameter Modelica.SIunits.Height rooHei = 3 "Height of the room";
@@ -15,27 +15,27 @@ partial model WaterCooledChillerExample7 "Primary only chiller plant system with
   parameter Modelica.SIunits.MassFlowRate mCHW_flow_nominal = 2 * QRoo_flow / (4200 * 20) "Nominal mass flow rate at chilled water";
   parameter Modelica.SIunits.MassFlowRate mCW_flow_nominal = 2 * QRoo_flow / (4200 * 6) "Nominal mass flow rate at condenser water";
   parameter Modelica.SIunits.PressureDifference dp_nominal = 500 "Nominal pressure difference";
-  Buildings.Fluid.Movers.FlowControlled_m_flow fanSup(redeclare package Medium = MediumA, m_flow_nominal = mAir_flow_nominal, dp(start = 249), m_flow(start = mAir_flow_nominal), use_inputFilter = false, energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyState, T_start = 293.15) "Supply fan for air flow through the room" annotation(
+  Buildings.Fluid.Movers.FlowControlled_m_flow fanSup(redeclare package Medium = MediumA, m_flow_nominal = mAir_flow_nominal, dp_nominal = 249, nominalValuesDefineDefaultPressureCurve = true, addPowerToMedium = false, dp(start = 249), m_flow(start = mAir_flow_nominal), use_inputFilter = false, energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyState, T_start = 293.15) "Supply fan for air flow through the room" annotation(
     Placement(visible = true, transformation(extent = {{354, -235}, {334, -215}}, rotation = 0)));
-  Buildings.Fluid.HeatExchangers.DryCoilCounterFlow cooCoi(redeclare package Medium1 = MediumW, redeclare package Medium2 = MediumA, m2_flow_nominal = mAir_flow_nominal, m1_flow_nominal = mCHW_flow_nominal, m1_flow(start = mCHW_flow_nominal), m2_flow(start = mAir_flow_nominal), dp2_nominal = 249 * 3, UA_nominal = mAir_flow_nominal * 1006 * 5, energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyStateInitial, dp1_nominal(displayUnit = "Pa") = 1000 + 89580) "Cooling coil" annotation(
+  Buildings.Fluid.HeatExchangers.DryCoilCounterFlow cooCoi(redeclare package Medium1 = MediumW, redeclare package Medium2 = MediumA, m2_flow_nominal = mAir_flow_nominal, m1_flow_nominal = mCHW_flow_nominal, m1_flow(start = mCHW_flow_nominal), m2_flow(start = mAir_flow_nominal), dp2_nominal = 249 * 3, UA_nominal = mAir_flow_nominal * 1006 * 5, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp1_nominal(displayUnit = "Pa") = 1000 + 89580) "Cooling coil" annotation(
     Placement(visible = true, transformation(extent = {{306, -180}, {286, -160}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant mFanFlo(k = mAir_flow_nominal) "Mass flow rate of fan" annotation(
     Placement(visible = true, transformation(extent = {{288, -206}, {308, -186}}, rotation = 0)));
-  Buildings.Fluid.Movers.FlowControlled_dp pumCHW(redeclare package Medium = MediumW, m_flow_nominal = mCHW_flow_nominal, m_flow(start = mCHW_flow_nominal), dp(start = 325474), use_inputFilter = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial) "Chilled water pump" annotation(
+  Buildings.Fluid.Movers.FlowControlled_m_flow pumCHW(redeclare package Medium = MediumW, m_flow_nominal = mCHW_flow_nominal, dp_nominal = 325474, nominalValuesDefineDefaultPressureCurve = true, m_flow(start = mCHW_flow_nominal), dp(start = 325474), use_inputFilter = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial) "Chilled water pump" annotation(
     Placement(visible = true, transformation(origin = {220, 70}, extent = {{10, 10}, {-10, -10}}, rotation = 270)));
-  Buildings.Fluid.Storage.ExpansionVessel expVesCHW(redeclare package Medium = MediumW, V_start = 1) "Expansion vessel" annotation(
+  Buildings.Fluid.Storage.ExpansionVessel expVesCHW(redeclare package Medium = MediumW, V_start = 1, p_start = 1500000) "Expansion vessel" annotation(
     Placement(visible = true, transformation(extent = {{256, -155}, {276, -135}}, rotation = 0)));
   Buildings.Fluid.HeatExchangers.CoolingTowers.YorkCalc cooTow(redeclare package Medium = MediumW, m_flow_nominal = mCW_flow_nominal, PFan_nominal = 6000, TAirInWB_nominal(displayUnit = "degC") = 283.15, TApp_nominal = 6, dp_nominal = 14930 + 14930 + 74650, energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyStateInitial) "Cooling tower" annotation(
     Placement(visible = true, transformation(origin = {280, 239}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Movers.FlowControlled_m_flow pumCW(redeclare package Medium = MediumW, m_flow_nominal = mCW_flow_nominal, dp(start = 214992), use_inputFilter = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial) "Condenser water pump" annotation(
+  Buildings.Fluid.Movers.FlowControlled_m_flow pumCW(redeclare package Medium = MediumW, m_flow_nominal = mCW_flow_nominal, dp_nominal = 214992, nominalValuesDefineDefaultPressureCurve = true, dp(start = 214992), use_inputFilter = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial) "Condenser water pump" annotation(
     Placement(visible = true, transformation(origin = {360, 200}, extent = {{-10, 10}, {10, -10}}, rotation = 270)));
   Buildings.Fluid.Actuators.Valves.TwoWayLinear val5(redeclare package Medium = MediumW, m_flow_nominal = mCW_flow_nominal, dpValve_nominal = 20902, dpFixed_nominal = 89580, y_start = 1, use_inputFilter = false) "Control valve for condenser water loop of chiller" annotation(
     Placement(visible = true, transformation(origin = {220, 180}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Buildings.Fluid.Actuators.Valves.TwoWayEqualPercentage val1(redeclare package Medium = MediumW, m_flow_nominal = mCHW_flow_nominal, dpValve_nominal = 20902, dpFixed_nominal = 14930, use_inputFilter = false, from_dp = true) "Bypass control valve for economizer. 1: disable economizer, 0: enable economoizer" annotation(
     Placement(visible = true, transformation(origin = {220, -122}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Buildings.Fluid.Storage.ExpansionVessel expVesChi(redeclare package Medium = MediumW, V_start = 1) annotation(
+  Buildings.Fluid.Storage.ExpansionVessel expVesChi(redeclare package Medium = MediumW, V_start = 1, p_start = 1500000) annotation(
     Placement(visible = true, transformation(extent = {{242, 143}, {262, 163}}, rotation = 0)));
-  Buildings.Fluid.Chillers.ElectricEIR chi(redeclare package Medium1 = MediumW, redeclare package Medium2 = MediumW, m1_flow_nominal = mCW_flow_nominal, m2_flow_nominal = mCHW_flow_nominal, dp2_nominal = 0, dp1_nominal = 0, per = Buildings.Fluid.Chillers.Data.ElectricEIR.ElectricEIRChiller_Carrier_19XR_742kW_5_42COP_VSD(), energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyStateInitial) annotation(
+  Buildings.Fluid.Chillers.ElectricEIR chi(redeclare package Medium1 = MediumW, redeclare package Medium2 = MediumW, m1_flow_nominal = mCW_flow_nominal, m2_flow_nominal = mCHW_flow_nominal, dp2_nominal = 0, dp1_nominal = 0, per = Buildings.Fluid.Chillers.Data.ElectricEIR.ElectricEIRChiller_Carrier_19XR_742kW_5_42COP_VSD(), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial) annotation(
     Placement(visible = true, transformation(extent = {{280, 83}, {260, 103}}, rotation = 0)));
   Buildings.Fluid.Actuators.Valves.TwoWayLinear val6(redeclare package Medium = MediumW, m_flow_nominal = mCHW_flow_nominal, dpValve_nominal = 20902, dpFixed_nominal = 14930 + 89580, y_start = 1, use_inputFilter = false, from_dp = true) "Control valve for chilled water leaving from chiller" annotation(
     Placement(visible = true, transformation(origin = {362, 68}, extent = {{-10, 10}, {10, -10}}, rotation = 270)));
@@ -63,7 +63,7 @@ partial model WaterCooledChillerExample7 "Primary only chiller plant system with
     Placement(visible = true, transformation(origin = {330, 69}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant pumCWCon(k = mCW_flow_nominal) "Control signal for condenser water pump" annotation(
     Placement(visible = true, transformation(origin = {330, 199}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Sources.Constant pumCHWCon(k = 10 * 6485) "Control signal for chilled water pump" annotation(
+  Modelica.Blocks.Sources.Constant pumCHWCon(k = mCHW_flow_nominal) "Control signal for chilled water pump" annotation(
     Placement(visible = true, transformation(origin = {172, 71}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant chiTSet(k = 273.15 + 5) "Set point for chilled water temperature " annotation(
     Placement(visible = true, transformation(origin = {260, 69}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -85,28 +85,28 @@ partial model WaterCooledChillerExample7 "Primary only chiller plant system with
     Placement(visible = true, transformation(origin = {192, -62}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Buildings.Controls.Continuous.LimPID conPIDTAirSup(Td = 1, Ti = 120, controllerType = Modelica.Blocks.Types.SimpleController.PI, k = 0.1, reverseAction = true, strict = true) annotation(
     Placement(visible = true, transformation(origin = {160, -122}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Movers.FlowControlled_m_flow fanRet(redeclare package Medium = MediumA, T_start = 293.15, dp(start = 249), energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyState, m_flow(start = mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) "Return fan for air flow from the room" annotation(
+  Buildings.Fluid.Movers.FlowControlled_m_flow fanRet(redeclare package Medium = MediumA, T_start = 293.15, dp_nominal = 249, nominalValuesDefineDefaultPressureCurve = true, addPowerToMedium = false, dp(start = 249), energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyState, m_flow(start = mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) "Return fan for air flow from the room" annotation(
     Placement(visible = true, transformation(extent = {{202, -235}, {182, -215}}, rotation = 0)));
-  Buildings.Fluid.Actuators.Dampers.Exponential damRet(redeclare package Medium = MediumA, m_flow(start = mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Actuators.Dampers.Exponential damRet(redeclare package Medium = MediumA, m_flow(start = 0.3 * mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {150, -202}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Buildings.Fluid.Actuators.Dampers.Exponential damEA(redeclare package Medium = MediumA, m_flow(start = mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Actuators.Dampers.Exponential damEA(redeclare package Medium = MediumA, m_flow(start = 0.7 * mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {110, -226}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-  Buildings.Fluid.Actuators.Dampers.Exponential damOA(redeclare package Medium = MediumA, m_flow(start = mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Actuators.Dampers.Exponential damOA(redeclare package Medium = MediumA, m_flow(start = 0.7 * mAir_flow_nominal), m_flow_nominal = mAir_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {110, -176}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant damCon(k = 0.7) annotation(
     Placement(visible = true, transformation(origin = {30, -145}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Buildings.Examples.ChillerPlant.BaseClasses.Controls.KMinusU kMinusU(k = 1) annotation(
     Placement(visible = true, transformation(origin = {110, -128}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.FixedResistances.Junction junRet(redeclare package Medium = MediumA, dp_nominal = {0, 0, 0}, m_flow_nominal = mAir_flow_nominal * {1, -1, -1}) annotation(
+  Buildings.Fluid.FixedResistances.Junction junRet(redeclare package Medium = MediumA, T_start = 293.15, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp_nominal = {0, 0, 0}, m_flow_nominal = mAir_flow_nominal * {1, -1, -1}) annotation(
     Placement(visible = true, transformation(origin = {150, -226}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
   Buildings.Fluid.Sources.Outside out(redeclare package Medium = MediumA, nPorts = 2, use_C_in = false) annotation(
     Placement(visible = true, transformation(extent = {{48, -206}, {68, -186}}, rotation = 0)));
-  Buildings.Fluid.FixedResistances.Junction junOut(redeclare package Medium = MediumA, dp_nominal = {0, 0, 0}, m_flow_nominal = mAir_flow_nominal * {1, -1, 1}) annotation(
+  Buildings.Fluid.FixedResistances.Junction junOut(redeclare package Medium = MediumA, T_start = 293.15, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp_nominal = {0, 0, 0}, m_flow_nominal = mAir_flow_nominal * {1, -1, 1}) annotation(
     Placement(visible = true, transformation(origin = {150, -176}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Sensors.RelativePressure PCHW annotation(
+  Buildings.Fluid.Sensors.RelativePressure PCHW(redeclare package Medium = MediumW) annotation(
     Placement(visible = true, transformation(origin = {292, -102}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
 
-  Buildings.Fluid.Movers.FlowControlled_dp pumCHW2(redeclare package Medium = MediumW, dp(start = 325474), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = mCHW_flow_nominal), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Movers.FlowControlled_m_flow pumCHW2(redeclare package Medium = MediumW, dp_nominal = 325474, nominalValuesDefineDefaultPressureCurve = true, dp(start = 325474), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = mCHW_flow_nominal), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {-12, 70}, extent = {{10, 10}, {-10, -10}}, rotation = 270)));
   Modelica.Blocks.Sources.Constant val8Con(k = 1) annotation(
     Placement(visible = true, transformation(origin = {28, 33}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -120,9 +120,9 @@ partial model WaterCooledChillerExample7 "Primary only chiller plant system with
     Placement(visible = true, transformation(origin = {48, 229}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant chiTSet2(k = 273.15 + 5) annotation(
     Placement(visible = true, transformation(origin = {28, 69}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Movers.FlowControlled_m_flow pumCW2(redeclare package Medium = MediumW, dp(start = 214992), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow_nominal = mCW_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Movers.FlowControlled_m_flow pumCW2(redeclare package Medium = MediumW, dp_nominal = 214992, nominalValuesDefineDefaultPressureCurve = true, dp(start = 214992), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow_nominal = mCW_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {128, 200}, extent = {{-10, 10}, {10, -10}}, rotation = 270)));
-  Buildings.Fluid.Storage.ExpansionVessel expVesChi2(redeclare package Medium = MediumW, V_start = 1) annotation(
+  Buildings.Fluid.Storage.ExpansionVessel expVesChi2(redeclare package Medium = MediumW, V_start = 1, p_start = 1500000) annotation(
     Placement(visible = true, transformation(extent = {{10, 143}, {30, 163}}, rotation = 0)));
   Modelica.Blocks.Sources.Constant val7Con(k = 1) annotation(
     Placement(visible = true, transformation(origin = {-42, 181}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -132,38 +132,38 @@ partial model WaterCooledChillerExample7 "Primary only chiller plant system with
     Placement(visible = true, transformation(origin = {-18, 261}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Buildings.Fluid.Sensors.TemperatureTwoPort TWCLeaTow2(redeclare package Medium = MediumW, m_flow_nominal = mCW_flow_nominal) annotation(
     Placement(visible = true, transformation(origin = {108, 119}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-  Modelica.Blocks.Sources.Constant pumCHWcon2(k = 10 * 6485) annotation(
+  Modelica.Blocks.Sources.Constant pumCHWcon2(k = mCHW_flow_nominal) annotation(
     Placement(visible = true, transformation(origin = {-42, 69}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Chillers.ElectricEIR chi2(redeclare package Medium1 = MediumW, redeclare package Medium2 = MediumW, dp1_nominal = 0, dp2_nominal = 0, energyDynamics = Modelica.Fluid.Types.Dynamics.SteadyStateInitial, m1_flow_nominal = mCW_flow_nominal, m2_flow_nominal = mCHW_flow_nominal, per = Buildings.Fluid.Chillers.Data.ElectricEIR.ElectricEIRChiller_Carrier_19XR_742kW_5_42COP_VSD()) annotation(
+  Buildings.Fluid.Chillers.ElectricEIR chi2(redeclare package Medium1 = MediumW, redeclare package Medium2 = MediumW, dp1_nominal = 0, dp2_nominal = 0, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m1_flow_nominal = mCW_flow_nominal, m2_flow_nominal = mCHW_flow_nominal, per = Buildings.Fluid.Chillers.Data.ElectricEIR.ElectricEIRChiller_Carrier_19XR_742kW_5_42COP_VSD()) annotation(
     Placement(visible = true, transformation(extent = {{48, 83}, {28, 103}}, rotation = 0)));
-  Buildings.Fluid.FixedResistances.Junction junCHWSup(redeclare package Medium = MediumW, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, 1}) annotation(
+  Buildings.Fluid.FixedResistances.Junction junCHWSup(redeclare package Medium = MediumW, T_start = 293.15, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, 1}) annotation(
     Placement(visible = true, transformation(origin = {362, -22}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-  Buildings.Fluid.FixedResistances.Junction junCHWRet(redeclare package Medium = MediumW, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, -1}) annotation(
+  Buildings.Fluid.FixedResistances.Junction junCHWRet(redeclare package Medium = MediumW, T_start = 293.15, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, -1}) annotation(
     Placement(visible = true, transformation(origin = {220, -38}, extent = {{10, -10}, {-10, 10}}, rotation = 270)));
 
   Buildings.Fluid.Storage.StratifiedEnhancedInternalHex tan(redeclare package Medium = MediumW, redeclare package MediumHex = MediumW, Q_flow_nominal = 350 * 1000,THex_nominal(displayUnit = "K") = 323.15, TTan_nominal(displayUnit = "K") = 293.15,VTan = 460, dIns = 0.1, hHex_a = 1.5, hHex_b = 0.1, hTan = 3, mHex_flow_nominal = mCHW_flow_nominal, m_flow_nominal = mCHW_flow_nominal)  annotation(
     Placement(visible = true, transformation(origin = {-180, 52}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.FixedResistances.Junction junCHWRet2(redeclare package Medium = MediumW, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, -1}) annotation(
+  Buildings.Fluid.FixedResistances.Junction junCHWRet2(redeclare package Medium = MediumW, T_start = 293.15, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, -1}) annotation(
     Placement(visible = true, transformation(origin = {-12, -28}, extent = {{10, -10}, {-10, 10}}, rotation = 270)));
-  Buildings.Fluid.FixedResistances.Junction junCHWSup2(redeclare package Medium = MediumW, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, 1}) annotation(
+  Buildings.Fluid.FixedResistances.Junction junCHWSup2(redeclare package Medium = MediumW, T_start = 293.15, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, dp_nominal = {0, 0, 0}, m_flow_nominal = mCHW_flow_nominal * {1, -1, 1}) annotation(
     Placement(visible = true, transformation(origin = {128, -12}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-  Buildings.Fluid.Movers.FlowControlled_dp pumTanSup(redeclare package Medium = MediumW, dp(start = 325474), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = mCHW_flow_nominal), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Movers.FlowControlled_dp pumTanSup(redeclare package Medium = MediumW, dp_nominal = 325474, nominalValuesDefineDefaultPressureCurve = true, dp(start = 0), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = 0), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {-190, -28}, extent = {{10, 10}, {-10, -10}}, rotation = 0)));
-  Buildings.Fluid.Movers.FlowControlled_dp pumTanRet(redeclare package Medium = MediumW, dp(start = 325474), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = mCHW_flow_nominal), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(
+  Buildings.Fluid.Movers.FlowControlled_dp pumTanRet(redeclare package Medium = MediumW, dp_nominal = 325474, nominalValuesDefineDefaultPressureCurve = true, dp(start = 0), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = 0), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(
     Placement(visible = true, transformation(origin = {-150, -12}, extent = {{-10, 10}, {10, -10}}, rotation = 0)));
-  Modelica.Blocks.Sources.Constant pumTanCon(k = 1 * 6485) annotation(
+  Modelica.Blocks.Sources.Constant pumTanCon(k = 0) annotation(
     Placement(visible = true, transformation(origin = {-210, -57}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Buildings.Fluid.Actuators.Valves.TwoWayLinear val8_2(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 1) annotation(
     Placement(visible = true, transformation(origin = {-12, 2}, extent = {{10, -10}, {-10, 10}}, rotation = 270)));
-  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8_2Sto(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 1) annotation(
+  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8_2Sto(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 0) annotation(
     Placement(visible = true, transformation(origin = {-148, 34}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
-  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8Sto(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 1) annotation(
+  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8Sto(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 0) annotation(
     Placement(visible = true, transformation(origin = {-112, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
   Buildings.Examples.ChillerPlant.BaseClasses.Controls.KMinusU kMinusU2(k = 1) annotation(
     Placement(visible = true, transformation(origin = {-92, 18}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8_2Rel(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 1) annotation(
+  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8_2Rel(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 0) annotation(
     Placement(visible = true, transformation(origin = {-112, -28}, extent = {{-10, 10}, {10, -10}}, rotation = 180)));
-  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8Rel(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 1) annotation(
+  Buildings.Fluid.Actuators.Valves.TwoWayLinear val8Rel(redeclare package Medium = MediumW, dpFixed_nominal = 14930 + 89580, dpValve_nominal = 20902, from_dp = true, m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false, y_start = 0) annotation(
     Placement(visible = true, transformation(origin = {-86, -12}, extent = {{10, 10}, {-10, -10}}, rotation = 180)));
 equation
   connect(expVesCHW.port_a, cooCoi.port_b1) annotation(
@@ -201,7 +201,7 @@ equation
     Line(points = {{341, 69}, {350, 69}, {350, 68}}, color = {0, 0, 127}));
   connect(pumCWCon.y, pumCW.m_flow_in) annotation(
     Line(points = {{341, 199}, {355, 199}}, color = {0, 0, 127}));
-  connect(pumCHWCon.y, pumCHW.dp_in) annotation(
+  connect(pumCHWCon.y, pumCHW.m_flow_in) annotation(
     Line(points = {{183, 71}, {214, 71}, {214, 70}}, color = {0, 0, 127}));
   connect(chiTSet.y, chi.TSet) annotation(
     Line(points = {{271, 69}, {281, 69}, {281, 89}}, color = {0, 0, 127}));
@@ -276,7 +276,7 @@ equation
     Line(points = {{302, -102}, {302, -107}, {304, -107}, {304, -74}}, color = {0, 127, 255}));
   connect(PCHW.port_b, valByp.port_a) annotation(
     Line(points = {{282, -102}, {282, -107}, {284, -107}, {284, -74}}, color = {0, 127, 255}));
-  connect(pumCHWcon2.y, pumCHW2.dp_in) annotation(
+  connect(pumCHWcon2.y, pumCHW2.m_flow_in) annotation(
     Line(points = {{-31, 69}, {-24, 69}, {-24, 70}}, color = {0, 0, 127}));
   connect(val7Con.y, val7.y) annotation(
     Line(points = {{-31, 181}, {-19, 181}, {-19, 179}}, color = {0, 0, 127}));

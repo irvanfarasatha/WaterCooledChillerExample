@@ -103,7 +103,7 @@ partial model WaterCooledChillerExample6 "Primary only chiller plant system with
     Placement(visible = true, transformation(extent = {{48, -206}, {68, -186}}, rotation = 0)));
   Buildings.Fluid.FixedResistances.Junction junOut(redeclare package Medium = MediumA, dp_nominal = {0, 0, 0}, m_flow_nominal = mAir_flow_nominal * {1, -1, 1}) annotation(
     Placement(visible = true, transformation(origin = {150, -176}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Sensors.RelativePressure PCHW annotation(
+  Buildings.Fluid.Sensors.RelativePressure PCHW(redeclare package Medium = MediumW) annotation(
     Placement(visible = true, transformation(origin = {292, -102}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
 
   Buildings.Fluid.Movers.FlowControlled_dp pumCHW2(redeclare package Medium = MediumW, dp(start = 325474), energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow(start = mCHW_flow_nominal), m_flow_nominal = mCHW_flow_nominal, use_inputFilter = false) annotation(

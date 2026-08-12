@@ -111,7 +111,7 @@ partial model WaterCooledChillerExample5 "Primary only chiller plant system with
     Placement(visible = true, transformation(extent = {{-22, -206}, {-2, -186}}, rotation = 0)));
   Buildings.Fluid.FixedResistances.Junction junOut(redeclare package Medium = MediumA, dp_nominal = {0, 0, 0}, m_flow_nominal = mAir_flow_nominal * {1, -1, 1}) annotation(
     Placement(visible = true, transformation(origin = {82, -176}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Buildings.Fluid.Sensors.RelativePressure PCHW annotation(
+  Buildings.Fluid.Sensors.RelativePressure PCHW(redeclare package Medium = MediumW) annotation(
     Placement(visible = true, transformation(origin = {226, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
 equation
   connect(expVesCHW.port_a, cooCoi.port_b1) annotation(
