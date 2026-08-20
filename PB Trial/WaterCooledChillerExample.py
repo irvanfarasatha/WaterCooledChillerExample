@@ -113,7 +113,10 @@ def result_file_from_output(output):
 
 
 def main():
-    repo_dir = Path(__file__).resolve().parent
+    # Use the repository root package layout. OpenModelica package loading is
+    # fragile when the package file sits in "PB Trial" because the folder name
+    # contains a space.
+    repo_dir = Path(__file__).resolve().parents[1]
 
     parser = argparse.ArgumentParser(
         description="Run WaterCooledChillerExample7 with OpenModelica."
