@@ -1,0 +1,15 @@
+﻿cd("C:/Users/irfan/OneDrive/Documents/GitHub/PB/WaterCooledChillerExample/Trial_Final/logic2");
+loadModel(Modelica, {"3.2.2"});
+loadModel(Buildings, {"6.0.0"});
+loadFile("C:/Users/irfan/OneDrive/Documents/GitHub/PB/WaterCooledChillerExample/Trial_Final/logic2.mo");
+simulate(
+  logic2,
+  startTime = 13046400,
+  stopTime = 13651200,
+  numberOfIntervals = 2016,
+  tolerance = 1E-06,
+  outputFormat = "csv",
+  fileNamePrefix = "logic2_raw",
+  variableFilter = ".*"
+);
+getErrorString();

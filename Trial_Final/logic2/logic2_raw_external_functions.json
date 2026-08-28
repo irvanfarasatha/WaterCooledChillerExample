@@ -1,0 +1,16 @@
+[
+"getTimeSpan",
+"ModelicaStandardTables_CombiTable1D_maximumAbscissa",
+"ModelicaStandardTables_CombiTable1D_minimumAbscissa",
+"ModelicaStandardTables_CombiTable1D_getValue",
+"ModelicaStandardTables_CombiTable1D_init2",
+"ModelicaStandardTables_CombiTable1D_close",
+"ModelicaError",
+"ModelicaInternal_print",
+"ModelicaInternal_readLine",
+"ModelicaStrings_compare",
+"ModelicaStrings_length",
+"ModelicaStrings_substring",
+"ModelicaStrings_scanReal",
+"ModelicaStrings_skipWhiteSpace"
+]
