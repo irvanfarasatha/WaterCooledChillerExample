@@ -9,11 +9,11 @@
 
   OPENMODELICAHOME                    = "C:/Program Files/OpenModelica1.27.0-64bit"
 
-  guid                                = "{8e4e377a-67b1-470f-b6de-6dce3c0fd11a}"
+  guid                                = "{a558564b-658f-4dac-9f84-4f87b75fc12f}"
 
   description                         = "Combined flow-first CHW control with CHWST reset and staged chillers"
   generationTool                      = "OpenModelica Compiler OpenModelica v1.27.0 (64-bit)"
-  generationDateAndTime               = "2026-08-28T15:58:21Z"
+  generationDateAndTime               = "2026-08-31T17:52:28Z"
 
   variableNamingConvention            = "structured"
 

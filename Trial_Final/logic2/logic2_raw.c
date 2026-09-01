@@ -20220,7 +20220,7 @@ void logic2_raw_setupDataStruc(DATA *data, threadData_t *threadData)
   data->modelData->modelFileName = "logic2.mo";
   data->modelData->resultFileName = NULL;
   data->modelData->modelDir = "C:/Users/irfan/OneDrive/Documents/GitHub/PB/WaterCooledChillerExample/Trial_Final";
-  data->modelData->modelGUID = "{19658c6f-ee6c-491b-b57b-babc6ddf7104}";
+  data->modelData->modelGUID = "{6626b9fe-db71-436c-84c3-13d3481424dd}";
   #if defined(OPENMODELICA_XML_FROM_FILE_AT_RUNTIME)
   data->modelData->initXMLData = NULL;
   data->modelData->modelDataXml.infoXMLData = NULL;

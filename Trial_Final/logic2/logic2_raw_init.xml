@@ -9,11 +9,11 @@
 
   OPENMODELICAHOME                    = "C:/Program Files/OpenModelica1.27.0-64bit"
 
-  guid                                = "{19658c6f-ee6c-491b-b57b-babc6ddf7104}"
+  guid                                = "{6626b9fe-db71-436c-84c3-13d3481424dd}"
 
   description                         = "Primary only chiller plant system with water-side economizer; load-based CHWST reset with constant max CHW pump flow"
   generationTool                      = "OpenModelica Compiler OpenModelica v1.27.0 (64-bit)"
-  generationDateAndTime               = "2026-08-28T15:57:30Z"
+  generationDateAndTime               = "2026-08-31T17:51:46Z"
 
   variableNamingConvention            = "structured"
 

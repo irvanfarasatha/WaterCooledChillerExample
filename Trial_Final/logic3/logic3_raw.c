@@ -20314,7 +20314,7 @@ void logic3_raw_setupDataStruc(DATA *data, threadData_t *threadData)
   data->modelData->modelFileName = "logic3.mo";
   data->modelData->resultFileName = NULL;
   data->modelData->modelDir = "C:/Users/irfan/OneDrive/Documents/GitHub/PB/WaterCooledChillerExample/Trial_Final";
-  data->modelData->modelGUID = "{8e4e377a-67b1-470f-b6de-6dce3c0fd11a}";
+  data->modelData->modelGUID = "{a558564b-658f-4dac-9f84-4f87b75fc12f}";
   #if defined(OPENMODELICA_XML_FROM_FILE_AT_RUNTIME)
   data->modelData->initXMLData = NULL;
   data->modelData->modelDataXml.infoXMLData = NULL;
