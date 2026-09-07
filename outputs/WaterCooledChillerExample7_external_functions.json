@@ -1,0 +1,17 @@
+[
+"getTimeSpan",
+"ModelicaStandardTables_CombiTable1D_init",
+"ModelicaStandardTables_CombiTable1D_close",
+"ModelicaError",
+"ModelicaInternal_print",
+"ModelicaInternal_readLine",
+"ModelicaStrings_compare",
+"ModelicaStrings_length",
+"ModelicaStrings_substring",
+"ModelicaStrings_scanReal",
+"ModelicaStrings_skipWhiteSpace",
+"ModelicaStandardTables_CombiTable1D_getValue",
+"ModelicaStandardTables_CombiTable1D_read",
+"ModelicaStandardTables_CombiTable1D_getValue",
+"ModelicaStandardTables_CombiTable1D_read"
+]

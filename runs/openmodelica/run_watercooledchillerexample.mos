@@ -1,0 +1,6 @@
+loadModel(Modelica, {"3.2.2"});
+loadModel(Buildings, {"6.0.0"});
+loadString("package WaterCooledChillerExample annotation(uses(Modelica(version = \"3.2.2\"), Buildings(version = \"6.0.0\"))); end WaterCooledChillerExample;");
+loadFile("C:/Users/Irvan/OneDrive/Dokumen/GitHub/WaterCooledChillerExample/WaterCooledChillerExample7.mo");
+simulate(WaterCooledChillerExample.WaterCooledChillerExample7, startTime=13046400.0, stopTime=13651200.0, numberOfIntervals=500, tolerance=1e-06);
+getErrorString();

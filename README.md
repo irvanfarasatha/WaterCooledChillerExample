@@ -19,5 +19,24 @@
 * 以下の記事も参照ください．  
   [ModelicaのインストールとModelica Buildings Libraryのサンプルモデルの実行 - Yoshihiro Ohta’s blog](https://ohtayo.hatenablog.com/entry/2021/04/25/223209)
 
+<<<<<<< Updated upstream
+=======
+# OpenModelica setup
+* Use the full model name: `WaterCooledChillerExample.WaterCooledChillerExample7`.
+* The OpenModelica library path should contain the package folder only:
+  `%APPDATA%\.openmodelica\libraries\WaterCooledChillerExample`.
+  Do not copy `package.mo`, `package.order`, or `WaterCooledChillerExample*.mo` directly into
+  `%APPDATA%\.openmodelica\libraries`.
+* Required library versions for this package are pinned in `package.mo`:
+  `Buildings 6.0.0` and `Modelica 3.2.2`.
+* To install and verify with OpenModelica:
+  - `& "C:\Program Files\OpenModelica1.27.0-64bit\bin\omc.exe" install_openmodelica_dependencies.mos`
+  - `& "C:\Program Files\OpenModelica1.27.0-64bit\bin\omc.exe" check_openmodelica.mos`
+* Modex v0.1.11 currently builds the active nested file as `WaterCooledChillerExample7`
+  instead of `WaterCooledChillerExample.WaterCooledChillerExample7`. If you use Modex
+  simulation, copy `modex_compat\WaterCooledChillerExample7.mo` to
+  `%APPDATA%\.openmodelica\libraries\WaterCooledChillerExample7.mo`.
+
+>>>>>>> Stashed changes
 # License
 MITライセンスで公開します．
